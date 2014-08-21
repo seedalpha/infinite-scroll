@@ -1,34 +1,16 @@
 /**
- * Implement infinite scrolling
- * - Inspired by: http://ravikiranj.net/drupal/201106/code/javascript/how-implement-infinite-scrolling-using-native-javascript-and-yui3
+ * Infinite scrolling
+ *
+ * @ref https://github.com/alexblack/infinite-scroll
  */
- 
 
-var isIE = /msie/gi.test(navigator.userAgent); // http://pipwerks.com/2011/05/18/sniffing-internet-explorer-via-javascript/
 
-exports = module.exports = function(options) {
-  var defaults = {
-    callback: function() {},
-    distance: 50
-  }
-  // Populate defaults
-  for (var key in defaults) {
-    if(typeof options[key] == 'undefined') options[key] = defaults[key];
-  }  
-  
-  var scroller = {
-    options: options,
-    updateInitiated: false
-  }
-  
-  window.onscroll = function(event) {
-    handleScroll(scroller, event);
-  }
-  // For touch devices, try to detect scrolling by touching
-  document.ontouchmove = function(event) {
-    handleScroll(scroller, event);
-  }
-}
+/**
+ * Helpers
+ */
+
+var isIE = /msie/gi.test(navigator.userAgent);
+
 
 function getScrollPos() {
   // Handle scroll position in case of IE differently
@@ -39,31 +21,96 @@ function getScrollPos() {
   }
 }
 
-var prevScrollPos = getScrollPos();
 
-// Respond to scroll events
-function handleScroll(scroller, event) {
-  if (scroller.updateInitiated) {
-    return;
-  }   
-  var scrollPos = getScrollPos();
-  if (scrollPos == prevScrollPos) {
-    return; // nothing to do
+/**
+ * Constructor
+ *
+ * @param {Object} options
+ *   @param {Number} distance, distance to bottom
+ *   @param {Function} callback(done)
+ */
+
+function InfiniteScroll(options) {
+  
+  if (!(this instanceof InfiniteScroll)) {
+    return new InfiniteScroll(options);
   }
   
-  // Find the pageHeight and clientHeight(the no. of pixels to scroll to make the scrollbar reach max pos)
-  var pageHeight = document.documentElement.scrollHeight;
-  var clientHeight = document.documentElement.clientHeight;
+  options.callback = options.callback || function() {};
+  options.distance = options.distance || 50;
   
-  // Check if scroll bar position is just 50px above the max, if yes, initiate an update
-  if (pageHeight - (scrollPos + clientHeight) < scroller.options.distance) {
-    scroller.updateInitiated = true;
-
-    scroller.options.callback(function() {
-      scroller.updateInitiated = false;
-    });
-  }
+  this.updateInitiated = false;
+  this.prevScrollPos = getScrollPos();
+  this.options = options;
+  this.enabled = false;
   
-  prevScrollPos = scrollPos;  
+  window.addEventListener('scroll',    this._onScroll.bind(this), false);
+  window.addEventListener('touchmove', this._onScroll.bind(this), false);
 }
 
+
+/**
+ * Scroll listener
+ * 
+ * @api private
+ */
+
+InfiniteScroll.prototype._onScroll = function(e) {
+  if (!this.enabled) return;
+  if (this.updateInitiated) return;
+
+  var scrollPos = getScrollPos();
+
+  if (scrollPos === this.prevScrollPos) return;
+  
+  // Find the pageHeight and clientHeight(the no. of pixels to scroll to make the scrollbar reach max pos)
+  // var pageHeight = document.documentElement.scrollHeight;
+  var clientHeight = document.documentElement.clientHeight;
+  
+  var body = document.body;
+  var html = document.documentElement;
+  
+  var pageHeight = Math.max(
+    body.scrollHeight, 
+    body.offsetHeight, 
+    html.clientHeight, 
+    html.scrollHeight, 
+    html.offsetHeight
+  );
+  
+  // Check if scroll bar position is just `distance` above the max, if yes, initiate an update
+  if (pageHeight - (scrollPos + clientHeight) < this.options.distance) {
+    this.updateInitiated = true;
+    
+    this.options.callback(function() {
+      this.updateInitiated = false;
+    }.bind(this));
+  }
+  
+  this.prevScrollPos = scrollPos;
+}
+
+
+/**
+ * Enable scroll tracking
+ */
+
+InfiniteScroll.prototype.enable = function() {
+  this.enabled = true;
+}
+
+
+/**
+ * Disable scroll tracking
+ */
+
+InfiniteScroll.prototype.disable = function() {
+  this.enabled = false;
+}
+
+
+/**
+ * Expose 
+ */
+
+exports = module.exports = InfiniteScroll;

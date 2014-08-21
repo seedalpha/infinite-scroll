@@ -1,11 +1,8 @@
 {
   "name": "infinite-scroll",
-  "version": "0.1.0",
-  "description": "Infinite-Scroll",
+  "version": "0.2.0",
+  "description": "InfiniteScroll",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/rusintez/infinite-scroll.git"
@@ -17,7 +14,7 @@
     "browserify",
     "no-deps"
   ],
-  "author": "Alex Black",
+  "author": "Vladimir Popov <rusintez@gmail.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/rusintez/infinite-scroll/issues"
