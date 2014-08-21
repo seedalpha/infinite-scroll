@@ -1,4 +1,5 @@
 # Infinite-Scroll
+
 Inspired by: http://ravikiranj.net/drupal/201106/code/javascript/how-implement-infinite-scrolling-using-native-javascript-and-yui3
 
 - No dependencies
@@ -7,6 +8,9 @@ Inspired by: http://ravikiranj.net/drupal/201106/code/javascript/how-implement-i
 
 ## Usage
 ``` js
+
+var infiniteScroll = require('infinite-scroll');
+
 var options = {
   distance: 50,
   callback: function(done) {
