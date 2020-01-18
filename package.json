@@ -1,6 +1,6 @@
 {
-  "name": "infinite-scroll",
-  "version": "0.2.1",
+  "name": "@seedalpha/infinite-scroll",
+  "version": "0.2.11",
   "description": "InfiniteScroll",
   "main": "index.js",
   "repository": {
@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/rusintez/infinite-scroll/issues"
   },
-  "homepage": "https://github.com/rusintez/infinite-scroll"
+  "homepage": "https://github.com/rusintez/infinite-scroll",
+  "scripts": {},
+  "dependencies": [],
+  "devDependencies": []
 }
